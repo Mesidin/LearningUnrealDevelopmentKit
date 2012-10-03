@@ -1,0 +1,908 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>UDK</title>
+<style type="text/css">
+    li { list-style: none;  margin: 0; }
+    p { margin: 0; }
+    span.foldopened { color: white; font-size: xx-small;
+    border-width: 1; font-family: monospace; padding: 0em 0.25em 0em 0.25em; background: #e0e0e0;
+    VISIBILITY: visible;
+    cursor:pointer; }
+
+
+    span.foldclosed { color: #666666; font-size: xx-small;
+    border-width: 1; font-family: monospace; padding: 0em 0.25em 0em 0.25em; background: #e0e0e0;
+    VISIBILITY: hidden;
+    cursor:pointer; }
+
+    span.foldspecial { color: #666666; font-size: xx-small; border-style: none solid solid none;
+    border-color: #CCCCCC; border-width: 1; font-family: sans-serif; padding: 0em 0.1em 0em 0.1em; background: #e0e0e0;
+    cursor:pointer; }
+
+    span.l { color: red; font-weight: bold; }
+
+    a.mapnode:link {text-decoration: none; color: black; }
+    a.mapnode:visited {text-decoration: none; color: black; }
+    a.mapnode:active {text-decoration: none; color: black; }
+    a.mapnode:hover {text-decoration: none; color: black; background: #eeeee0; }
+
+</style>
+<!-- ^ Position is not set to relative / absolute here because of Mozilla -->
+</head>
+<body>
+
+<script type="text/javascript">
+   // Here we implement folding. It works fine with MSIE5.5, MSIE6.0 and
+   // Mozilla 0.9.6.
+
+   if (document.layers) {
+      //Netscape 4 specific code
+      pre = 'document.';
+      post = ''; }
+   if (document.getElementById) {
+      //Netscape 6 specific code
+      pre = 'document.getElementById("';
+      post = '").style'; }
+   if (document.all) {
+      //IE4+ specific code
+      pre = 'document.all.';
+      post = '.style'; }
+
+function layer_exists(layer) {
+   try {
+      eval(pre + layer + post);
+      return true; }
+   catch (error) {
+      return false; }}
+
+function show_layer(layer) {
+   eval(pre + layer + post).position = 'relative'; 
+   eval(pre + layer + post).visibility = 'visible'; }
+
+function hide_layer(layer) {
+   eval(pre + layer + post).visibility = 'hidden';
+   eval(pre + layer + post).position = 'absolute'; }
+
+function hide_folder(folder) {
+    hide_folding_layer(folder)
+    show_layer('show'+folder);
+
+    scrollBy(0,0); // This is a work around to make it work in Browsers (Explorer, Mozilla)
+}
+
+function show_folder(folder) {
+    // Precondition: all subfolders are folded
+
+    show_layer('hide'+folder);
+    hide_layer('show'+folder);
+    show_layer('fold'+folder);
+
+    scrollBy(0,0); // This is a work around to make it work in Browsers (Explorer, Mozilla)
+
+    var i;
+    for (i=1; layer_exists('fold'+folder+'_'+i); ++i) {
+       show_layer('show'+folder+'_'+i); }
+}
+function show_folder_completely(folder) {
+    // Precondition: all subfolders are folded
+
+    show_layer('hide'+folder);
+    hide_layer('show'+folder);
+    show_layer('fold'+folder);
+
+    scrollBy(0,0); // This is a work around to make it work in Browsers (Explorer, Mozilla)
+
+    var i;
+    for (i=1; layer_exists('fold'+folder+'_'+i); ++i) {
+       show_folder_completely(folder+'_'+i); }
+}
+
+
+
+function hide_folding_layer(folder) {
+   var i;
+   for (i=1; layer_exists('fold'+folder+'_'+i); ++i) {
+       hide_folding_layer(folder+'_'+i); }
+
+   hide_layer('hide'+folder);
+   hide_layer('show'+folder);
+   hide_layer('fold'+folder);
+
+   scrollBy(0,0); // This is a work around to make it work in Browsers (Explorer, Mozilla)
+}
+
+function fold_document() {
+   var i;
+   var folder = '1';
+   for (i=1; layer_exists('fold'+folder+'_'+i); ++i) {
+       hide_folder(folder+'_'+i); }
+}
+
+function unfold_document() {
+   var i;
+   var folder = '1';
+   for (i=1; layer_exists('fold'+folder+'_'+i); ++i) {
+       show_folder_completely(folder+'_'+i); }
+}
+
+</script>
+<SPAN class="foldspecial" onclick="fold_document()">All +</SPAN>
+<SPAN class="foldspecial" onclick="unfold_document()">All -</SPAN>
+<p>UDK
+<ul><li><span id="show1_1" class="foldclosed" onClick="show_folder('1_1')" style="POSITION: absolute">+</span> <span id="hide1_1" class="foldopened" onClick="hide_folder('1_1')">-</span>
+Levels
+<ul id="fold1_1" style="POSITION: relative; VISIBILITY: visible;"><li>LOD
+
+</li>
+<li>Prefabs
+
+</li>
+<li>Streaming
+
+</li>
+
+</ul>
+</li>
+<li><span id="show1_2" class="foldclosed" onClick="show_folder('1_2')" style="POSITION: absolute">+</span> <span id="hide1_2" class="foldopened" onClick="hide_folder('1_2')">-</span>
+Lighting
+<ul id="fold1_2" style="POSITION: relative; VISIBILITY: visible;"><li>Lightmass
+
+</li>
+
+</ul>
+</li>
+<li>Materials &amp; Textures
+
+</li>
+<li>Matinee
+
+</li>
+<li><span id="show1_3" class="foldclosed" onClick="show_folder('1_3')" style="POSITION: absolute">+</span> <span id="hide1_3" class="foldopened" onClick="hide_folder('1_3')">-</span>
+Meshes
+<ul id="fold1_3" style="POSITION: relative; VISIBILITY: visible;"><li>Skeletal Meshes
+
+</li>
+<li>Static Meshes
+
+</li>
+
+</ul>
+</li>
+<li>Physics
+
+</li>
+<li>Post Process Effects
+
+</li>
+<li><span id="show1_4" class="foldclosed" onClick="show_folder('1_4')" style="POSITION: absolute">+</span> <span id="hide1_4" class="foldopened" onClick="hide_folder('1_4')">-</span>
+Sounds
+<ul id="fold1_4" style="POSITION: relative; VISIBILITY: visible;"><li>SoundNode Wave
+<ul><li>Double click in the content browser to hear playback
+
+</li>
+
+</ul>
+</li>
+<li>SoundCue
+<ul><li>Operate similarly to Materials.
+
+</li>
+<li>Instructions on how to play back SoundNodeWaves
+
+</li>
+<li>Right-click &gt; Edit Using SoundCue Editor to edit.
+
+</li>
+<li>Read from right to left
+
+</li>
+<li>Can drop in sounds by slecting in the Content Browser, then right-clicking in the editor.
+
+</li>
+<li>Modulator controls pitch
+
+</li>
+<li>Attenuation defines how far or close a player is in order to the hear the sound at selected volumes
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li><span id="show1_5" class="foldclosed" onClick="show_folder('1_5')" style="POSITION: absolute">+</span> <span id="hide1_5" class="foldopened" onClick="hide_folder('1_5')">-</span>
+UnrealScript
+<ul id="fold1_5" style="POSITION: relative; VISIBILITY: visible;"><li>Syntax
+<ul><li><span id="show1_5_1" class="foldclosed" onClick="show_folder('1_5_1')" style="POSITION: absolute">+</span> <span id="hide1_5_1" class="foldopened" onClick="hide_folder('1_5_1')">-</span>
+Abstract Class
+<ul id="fold1_5_1" style="POSITION: relative; VISIBILITY: visible;"><li>Cannot be instanced or placed
+
+</li>
+
+</ul>
+</li>
+<li>Keywords
+<ul><li><span id="show1_5_2" class="foldclosed" onClick="show_folder('1_5_2')" style="POSITION: absolute">+</span> <span id="hide1_5_2" class="foldopened" onClick="hide_folder('1_5_2')">-</span>
+exec
+<ul id="fold1_5_2" style="POSITION: relative; VISIBILITY: visible;"><li>Can be bound to a key, such as in DefaultInput.ini
+
+</li>
+
+</ul>
+</li>
+<li>const
+
+</li>
+<li>editinline
+<ul><li>Inside editor, you can edit this object
+
+</li>
+
+</ul>
+</li>
+<li>instanced
+
+</li>
+
+</ul>
+</li>
+<li><span id="show1_5_3" class="foldclosed" onClick="show_folder('1_5_3')" style="POSITION: absolute">+</span> <span id="hide1_5_3" class="foldopened" onClick="hide_folder('1_5_3')">-</span>
+Type Casting
+<ul id="fold1_5_3" style="POSITION: relative; VISIBILITY: visible;"><li>&#xa;    <p>&#xa;      function example(Controller ControllerVariable)&#xa;    </p>&#xa;    <p>&#xa;      {&#xa;    </p>&#xa;    <p>&#xa;      &#xa0;&#xa0;Local MyPlayerController MyPC&#xa;    </p>&#xa;    <p>&#xa;      &#xa0;&#xa0;MyPC = MyPlayerController(ControllerVariable);&#xa;    </p>&#xa;    <p>&#xa;      &#xa0;&#xa0;if(MyPC != None)&#xa;    </p>&#xa;    <p>&#xa;      &#xa0;&#xa0;{&#xa;    </p>&#xa;    <p>&#xa;      &#xa0;&#xa0;&#xa0;&#xa0;//Do stuff here MyPC.VariableName&#xa;    </p>&#xa;    <p>&#xa;      &#xa0;&#xa0;}&#xa;    </p>&#xa;    <p>&#xa;      }<br>&#xa;    </p>&#xa;  
+</li>
+</ul>
+</li>
+
+</ul>
+</li>
+<li>Setup Custom Scripts
+<ul><li>Create Folder in Src
+<ul><li>Create a classes folder
+
+</li>
+
+</ul>
+</li>
+<li>UDKGame/Config/DefaultEngine.ini
+<ul><li>+EditPackages=CustomFolderName
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>Base UnrealScript Code
+<ul><li>Camera
+<ul><li>Actor which represents the position and rotation of the view
+
+</li>
+
+</ul>
+</li>
+<li>Actor
+<ul><li>PlaySound
+<ul><li>Directly reference from the content browser to play any SoundCue from within an actor.
+
+</li>
+<li>Generally don't recommend doing this. Make an archetype instead.
+
+</li>
+<li>If bNotReplicated is set to true, only client will hear the sound
+
+</li>
+<li>If bNoRepToOwner, it keeps the sound from coming back to the client AGAIN when replicated
+
+</li>
+<li>If bStopWhenOwnerDestroyed, kill sound as soon as the actor that played it is destroyed.
+
+</li>
+<li>SoundLocation: where in the world is the sound being generated, for attenuation
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>GameInfo
+<ul><li>Actor which handles all of the rules for the game
+
+</li>
+<li>Important game logic handled by this to prevent player cheating
+
+</li>
+
+</ul>
+</li>
+<li>HUD
+<ul><li>Actor which handles all of the onscreen information rendering for the game
+
+</li>
+
+</ul>
+</li>
+<li>Inventory
+<ul><li>Represents things the players can carry with them
+
+</li>
+<li>InventoryManager
+
+</li>
+
+</ul>
+</li>
+<li><span id="show1_5_4" class="foldclosed" onClick="show_folder('1_5_4')" style="POSITION: absolute">+</span> <span id="hide1_5_4" class="foldopened" onClick="hide_folder('1_5_4')">-</span>
+Pawns
+<ul id="fold1_5_4" style="POSITION: relative; VISIBILITY: visible;"><li><p>Allow controllers to posses them and control their actions
+<p>AI &amp; players posses pawns and forward their input to direct pawns
+<p>Player Controllers receive input players make and process them for sending to the pawn. &nbsp;The pawn responds to the controls as desired.
+<p>It is possible to have a Pawn use a static mesh, particle effect or sprite.
+<p>UDK assumes that a Pawn is a humanoid type creature.
+<p>Classes
+<ul><li>Pawn.uc
+<ul><li><span id="show1_5_4_1" class="foldclosed" onClick="show_folder('1_5_4_1')" style="POSITION: absolute">+</span> <span id="hide1_5_4_1" class="foldopened" onClick="hide_folder('1_5_4_1')">-</span>
+TakeDamage
+<ul id="fold1_5_4_1" style="POSITION: relative; VISIBILITY: visible;"><li>If it's on client or health &lt;= 0, abort
+
+</li>
+<li>Adjust damage based on game/world rules or mutators
+
+</li>
+<li>Reduce health
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul></li>
+</ul>
+</li>
+<li>PlayerController
+<ul><li>StartFire
+<ul><li>FireModNum
+<ul><li>Primary or Alt Fire
+
+</li>
+
+</ul>
+</li>
+<li>Calls Pawn.StartFire
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>PlayerReplicationInfo
+<ul><li><p>Actor which acts as communication gateway between the server and client.
+<p>Client and server can communicate, but client cannot communicate with the other clients. &nbsp;PRI solves this issue.
+</li>
+</ul>
+</li>
+<li>Weapons
+<ul><li>Engine/Weapon.uc is the base class
+
+</li>
+<li>Inventory actor pawns can own and control
+
+</li>
+<li>Classes
+<ul><li><span id="show1_5_5" class="foldclosed" onClick="show_folder('1_5_5')" style="POSITION: absolute">+</span> <span id="hide1_5_5" class="foldopened" onClick="hide_folder('1_5_5')">-</span>
+Weapon.uc
+<ul id="fold1_5_5" style="POSITION: relative; VISIBILITY: visible;"><li><span id="show1_5_5_1" class="foldclosed" onClick="show_folder('1_5_5_1')" style="POSITION: absolute">+</span> <span id="hide1_5_5_1" class="foldopened" onClick="hide_folder('1_5_5_1')">-</span>
+Weapon States
+<ul id="fold1_5_5_1" style="POSITION: relative; VISIBILITY: visible;"><li>WeaponEquipping
+
+</li>
+<li><span id="show1_5_5_1_1" class="foldclosed" onClick="show_folder('1_5_5_1_1')" style="POSITION: absolute">+</span> <span id="hide1_5_5_1_1" class="foldopened" onClick="hide_folder('1_5_5_1_1')">-</span>
+Active
+<ul id="fold1_5_5_1_1" style="POSITION: relative; VISIBILITY: visible;"><li>Looks at state of pending fire. &nbsp;If 1 or 0, it performs appropriate action
+
+</li>
+<li>BeginFire Override
+<ul><li>If weapon has ammo, SendToFiringState
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>SendToFiringState
+<ul><li>Checks to make sure state is valid
+
+</li>
+<li>Sets current fire mode
+
+</li>
+<li>Got to appropriate firing state for the fire mode
+
+</li>
+
+</ul>
+</li>
+<li>WeaponFiring
+<ul><li>FireAmmunition
+<ul><li>consumes player ammo
+
+</li>
+<li>Checks fire types for this firemode
+<ul><li>InstantFire
+<ul><li>StartTrace
+<ul><li>Point at which the gun fires from.
+
+</li>
+
+</ul>
+</li>
+<li>EndTrace
+<ul><li>Destination point.
+
+</li>
+
+</ul>
+</li>
+<li>RealImpact
+<ul><li>Returns back list of actors that got hit
+
+</li>
+<li>Pass through several actors possible
+
+</li>
+
+</ul>
+</li>
+<li>Role_authority
+<ul><li>Only on the server
+
+</li>
+<li>SetFlashLocation
+<ul><li>Indicates to all clients where the weapon hit
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>ProcessInstantHit
+<ul><li>Process each actor the trace hit
+
+</li>
+<li>With extent(width &amp; height), the one trace can replace several(such as shotgun)
+
+</li>
+<li>If trace hit static mesh, and mesh can convert to physics actor, do it here.
+
+</li>
+<li>(Pawn) TakeDamage
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>ProjectileFire
+<ul><li>Role_authority
+<ul><li><p>For security reasons, we only want to spawn actors on the server. Won't exist on server and other clients if spawned on client
+<p>StartTrace
+<p>AimDir
+<ul><li>Where the projectile is going
+
+</li>
+
+</ul><p>Check to make sure spawn location makes sense
+<p>SpawnProjectile
+<p>Initialize Spawn Projectile
+<p>Returns projectile object for use after it has been spawned for playing sounds and other fun stuff
+<p>Projectiles get replicated to all other clients
+</li>
+</ul>
+</li>
+
+</ul>
+</li>
+<li>CustomFire
+<ul><li>Blank function you can go crazy with in your own weapons
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>TimeWeaponFiring
+
+</li>
+
+</ul>
+</li>
+<li>HandleFinishFiring
+<ul><li>Go Back to Active state
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li><span id="show1_5_5_2" class="foldclosed" onClick="show_folder('1_5_5_2')" style="POSITION: absolute">+</span> <span id="hide1_5_5_2" class="foldopened" onClick="hide_folder('1_5_5_2')">-</span>
+StartFire
+<ul id="fold1_5_5_2" style="POSITION: relative; VISIBILITY: visible;"><li>If the role of the weapon is on the client, it will call ServerStartFire
+
+</li>
+
+</ul>
+</li>
+<li><span id="show1_5_5_3" class="foldclosed" onClick="show_folder('1_5_5_3')" style="POSITION: absolute">+</span> <span id="hide1_5_5_3" class="foldopened" onClick="hide_folder('1_5_5_3')">-</span>
+ServerStartFire
+<ul id="fold1_5_5_3" style="POSITION: relative; VISIBILITY: visible;"><li>Calls BeginFire on the server.
+
+</li>
+
+</ul>
+</li>
+<li><span id="show1_5_5_4" class="foldclosed" onClick="show_folder('1_5_5_4')" style="POSITION: absolute">+</span> <span id="hide1_5_5_4" class="foldopened" onClick="hide_folder('1_5_5_4')">-</span>
+BeginFire
+<ul id="fold1_5_5_4" style="POSITION: relative; VISIBILITY: visible;"><li>Calls SetPendingFire
+
+</li>
+
+</ul>
+</li>
+<li><span id="show1_5_5_5" class="foldclosed" onClick="show_folder('1_5_5_5')" style="POSITION: absolute">+</span> <span id="hide1_5_5_5" class="foldopened" onClick="hide_folder('1_5_5_5')">-</span>
+SetPendingFire
+<ul id="fold1_5_5_5" style="POSITION: relative; VISIBILITY: visible;"><li>Storing whether the fire button is on or off.
+
+</li>
+
+</ul>
+</li>
+<li><span id="show1_5_5_6" class="foldclosed" onClick="show_folder('1_5_5_6')" style="POSITION: absolute">+</span> <span id="hide1_5_5_6" class="foldopened" onClick="hide_folder('1_5_5_6')">-</span>
+StopFire
+<ul id="fold1_5_5_6" style="POSITION: relative; VISIBILITY: visible;"><li>Similar to StartFire process
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li><span id="show1_5_6" class="foldclosed" onClick="show_folder('1_5_6')" style="POSITION: absolute">+</span> <span id="hide1_5_6" class="foldopened" onClick="hide_folder('1_5_6')">-</span>
+Projectile.uc
+<ul id="fold1_5_6" style="POSITION: relative; VISIBILITY: visible;"><li>Init
+<ul><li>Does nothing by default. Grenades need different init from rockets
+
+</li>
+<li>Direction goes in straight line by default
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>Multiplayer
+<ul><li>Replication
+<ul><li>Data that is sent between the clients and the servers.
+
+</li>
+<li>Pawns
+<ul><li><p>Basic movement is already well replicated by UDK and shouldn't have to be changed much depending on your game
+</li>
+</ul>
+</li>
+<li>Weapons
+
+</li>
+
+</ul>
+</li>
+<li>Relevancy
+<ul><li><span id="show1_5_7" class="foldclosed" onClick="show_folder('1_5_7')" style="POSITION: absolute">+</span> <span id="hide1_5_7" class="foldopened" onClick="hide_folder('1_5_7')">-</span>
+Relevancy is used to control exactly what kind of network packets get sent out.
+<ul id="fold1_5_7" style="POSITION: relative; VISIBILITY: visible;"><li><p>Eg. A pawn in one room can't see a pawn in another, since they aren't relevant to each other, the client of one doesn't get the network traffic of the other. &nbsp;Sound might be an exception since they might be able to hear each other.
+<p>Reduces bandwidth in multiplayer games
+</li>
+</ul>
+</li>
+
+</ul>
+</li>
+<li>Simulation
+<ul><li><span id="show1_5_8" class="foldclosed" onClick="show_folder('1_5_8')" style="POSITION: absolute">+</span> <span id="hide1_5_8" class="foldopened" onClick="hide_folder('1_5_8')">-</span>
+Similar to multi-threaded coding. Multiple instances of the game running (server and clients)
+<ul id="fold1_5_8" style="POSITION: relative; VISIBILITY: visible;"><li>Servers version of game is authoritive.
+<ul><li>Prevents some client-side cheating
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>As the client is running their version of the game, they can similuate what's going on in the game.
+<ul><li>Interpolations of movement, rotation, etc... make the game appear smooth
+
+</li>
+
+</ul>
+</li>
+<li>Eg. &nbsp;Client knows it's own health, but might simulate the health of other clients.
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>Landscapes
+
+</li>
+<li>AI &amp; Navigation
+
+</li>
+<li>APEX
+
+</li>
+<li><span id="show1_6" class="foldclosed" onClick="show_folder('1_6')" style="POSITION: absolute">+</span> <span id="hide1_6" class="foldopened" onClick="hide_folder('1_6')">-</span>
+AnimSets
+<ul id="fold1_6" style="POSITION: relative; VISIBILITY: visible;"><li>AnimSet Editor
+<ul><li>Viewport for viewing animations
+
+</li>
+<li><span id="show1_6_1" class="foldclosed" onClick="show_folder('1_6_1')" style="POSITION: absolute">+</span> <span id="hide1_6_1" class="foldopened" onClick="hide_folder('1_6_1')">-</span>
+Skeleton Tree
+<ul id="fold1_6_1" style="POSITION: relative; VISIBILITY: visible;"><li>Shows all the bones created in the 3D program suchs as 3DS
+
+</li>
+<li>Choosing bone allows you to see the weights in the Viewport. Won't permanently affect the skeleton.
+
+</li>
+<li>Spacebar in the Viewport changes the tool type.
+
+</li>
+
+</ul>
+</li>
+<li><span id="show1_6_2" class="foldclosed" onClick="show_folder('1_6_2')" style="POSITION: absolute">+</span> <span id="hide1_6_2" class="foldopened" onClick="hide_folder('1_6_2')">-</span>
+Browser
+<ul id="fold1_6_2" style="POSITION: relative; VISIBILITY: visible;"><li>Mesh
+<ul><li>1 or 2 AnimSets are usually used across multiple skeletal meshes
+
+</li>
+<li>Extra Mesh might be used for characters with different torsos and heads or other limbs.
+
+</li>
+<li>Browse among the different skeletal meshes available.
+
+</li>
+
+</ul>
+</li>
+<li>Anim
+
+</li>
+<li>Morph
+
+</li>
+
+</ul>
+</li>
+<li><span id="show1_6_3" class="foldclosed" onClick="show_folder('1_6_3')" style="POSITION: absolute">+</span> <span id="hide1_6_3" class="foldopened" onClick="hide_folder('1_6_3')">-</span>
+Properties
+<ul id="fold1_6_3" style="POSITION: relative; VISIBILITY: visible;"><li><span id="show1_6_3_1" class="foldclosed" onClick="show_folder('1_6_3_1')" style="POSITION: absolute">+</span> <span id="hide1_6_3_1" class="foldopened" onClick="hide_folder('1_6_3_1')">-</span>
+Mesh
+<ul id="fold1_6_3_1" style="POSITION: relative; VISIBILITY: visible;"><li>Define different parameters for the selected mesh
+
+</li>
+<li>Bounds
+<ul><li>Used for occlusion queries for this mesh
+
+</li>
+
+</ul>
+</li>
+<li>Materials
+<ul><li>Default materials
+
+</li>
+<li>Highlight in Viewport when selected
+
+</li>
+
+</ul>
+</li>
+<li>Clothing Assets
+<ul><li>Apex System
+
+</li>
+
+</ul>
+</li>
+<li>Origin
+<ul><li>The origin is where the skeletal mesh has been exported from in 3ds Max or Maya
+
+</li>
+
+</ul>
+</li>
+<li>Rot Origin
+<ul><li>Default rotation, usually facing x-axis
+
+</li>
+
+</ul>
+</li>
+<li>Skeletal Mirror Table
+<ul><li>Allow you to mirror animations
+
+</li>
+
+</ul>
+</li>
+<li>LOD Info
+<ul><li>Allow you to change how the skeletal mesh appears as you gain/lose distance in the Viewport.
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li><span id="show1_6_3_2" class="foldclosed" onClick="show_folder('1_6_3_2')" style="POSITION: absolute">+</span> <span id="hide1_6_3_2" class="foldopened" onClick="hide_folder('1_6_3_2')">-</span>
+AnimSet
+<ul id="fold1_6_3_2" style="POSITION: relative; VISIBILITY: visible;"><li>Anim Rotation Only
+
+</li>
+
+</ul>
+</li>
+<li>AnimSequence
+
+</li>
+<li><span id="show1_6_3_3" class="foldclosed" onClick="show_folder('1_6_3_3')" style="POSITION: absolute">+</span> <span id="hide1_6_3_3" class="foldopened" onClick="hide_folder('1_6_3_3')">-</span>
+MorphTarget
+<ul id="fold1_6_3_3" style="POSITION: relative; VISIBILITY: visible;"><li>Used primarily in UDK with vehicles (damage)
+
+</li>
+
+</ul>
+</li>
+<li>Mesh Simplification
+<ul><li>Allows you to generate automatic LODing
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li><span id="show1_7" class="foldclosed" onClick="show_folder('1_7')" style="POSITION: absolute">+</span> <span id="hide1_7" class="foldopened" onClick="hide_folder('1_7')">-</span>
+AnimTree Editor
+<ul id="fold1_7" style="POSITION: relative; VISIBILITY: visible;"><li><p>Best way to read an AnimTree is from right to left
+<p>Orange Nodes are animation nodes that are being used
+<p>Black Nodes are animation nodes that are not being used.
+<p>Blue nodes are morph target nodes.
+<p><span id="show1_7_1" class="foldclosed" onClick="show_folder('1_7_1')" style="POSITION: absolute">+</span> <span id="hide1_7_1" class="foldopened" onClick="hide_folder('1_7_1')">-</span>
+Green nodes are skeletal controllers. &nbsp;Use Unrealscript or native code.
+<ul id="fold1_7_1" style="POSITION: relative; VISIBILITY: visible;"><li>You can create dynamic animations using these controls
+<ul><li><p>Example: Recoil on pistol can be smaller than recoil on rifle by tweaking skeletal recoil node values
+</li>
+</ul>
+</li>
+
+</ul><p>% - Show Node Weights, displays node influence on nodes in the viewport
+<p>Moving the black box in Nodes allows you to adjust the tree to preview what you will see in the game.
+<p>When creating a new ANimeTree, set the preview mesh in the preview mesh list. &nbsp;Can be slected from content browser using usual assign method
+<ul><li>Set the Anim Set list in the same way.
+
+</li>
+
+</ul><p>In an Anim Sequence Node, type the name of the animation sequence from the Anim Set you are using in order to apply that animation sequence to the node.
+</li>
+</ul>
+</li>
+<li><span id="show1_8" class="foldclosed" onClick="show_folder('1_8')" style="POSITION: absolute">+</span> <span id="hide1_8" class="foldopened" onClick="hide_folder('1_8')">-</span>
+Archetypes
+<ul id="fold1_8" style="POSITION: relative; VISIBILITY: visible;"><li>Instances of objects made in the editor.
+
+</li>
+<li>Configureable in Unreal editor, so designers can change options without touching the UnrealScript
+
+</li>
+<li>Archetyping Pawns allows you to change skeletal meshes, materials, etc... on the fly.
+
+</li>
+
+</ul>
+</li>
+<li>Cascade: Particles &amp; Effects
+
+</li>
+<li><span id="show1_9" class="foldclosed" onClick="show_folder('1_9')" style="POSITION: absolute">+</span> <span id="hide1_9" class="foldopened" onClick="hide_folder('1_9')">-</span>
+Editor
+<ul id="fold1_9" style="POSITION: relative; VISIBILITY: visible;"><li>BSP
+
+</li>
+<li>Configuration Files
+
+</li>
+<li><span id="show1_9_1" class="foldclosed" onClick="show_folder('1_9_1')" style="POSITION: absolute">+</span> <span id="hide1_9_1" class="foldopened" onClick="hide_folder('1_9_1')">-</span>
+Content Browser
+<ul id="fold1_9_1" style="POSITION: relative; VISIBILITY: visible;"><li>Packages
+
+</li>
+
+</ul>
+</li>
+<li><span id="show1_9_2" class="foldclosed" onClick="show_folder('1_9_2')" style="POSITION: absolute">+</span> <span id="hide1_9_2" class="foldopened" onClick="hide_folder('1_9_2')">-</span>
+Object Properties Window
+<ul id="fold1_9_2" style="POSITION: relative; VISIBILITY: visible;"><li>Right-click to reset option to default.
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>Foilage
+
+</li>
+<li>HUD
+
+</li>
+<li>Kismet
+
+</li>
+
+</ul><SCRIPT type="text/javascript">
+fold_document();
+</SCRIPT>
+</body>
+</html>
